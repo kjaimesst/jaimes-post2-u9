@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8" />
+    <title>Registro</title>
+</head>
+<body>
+    <h1>Registro de usuario</h1>
+
+    <form th:action="@{/registro}" th:object="${usuario}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div>
+            <label>Nombre:</label>
+            <input type="text" th:field="*{nombre}" />
+            <div th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+        </div> 
+
+        <div>
+            <label>Email:</label>
+            <input type="email" th:field="*{email}" />
+            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+        </div>
+
+        <div>
+            <label>Contraseña:</label>
+            <input type="password" th:field="*{contrasenia}" />
+            <div th:if="${#fields.hasErrors('contrasenia')}" th:errors="*{contrasenia}"></div>
+        </div>
+
+        <div>
+            <button type="submit">Registrar</button>
+        </div>
+    </form>
+
+    <p><a th:href="@{/login}">Volver al login</a></p>
+</body>
+</html>
