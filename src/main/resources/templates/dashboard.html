@@ -7,34 +7,25 @@
 </head>
 <body>
     <h1>Dashboard</h1>
-
-    <!--
-        sec:authentication="name" lee directamente el email del usuario
-        desde el contexto de seguridad de Spring, sin pasar por el controlador
-    -->
     <p>Bienvenido, <strong><span sec:authentication="name"></span></strong></p>
 
     <!--
-        sec:authorize evalúa el rol del usuario autenticado.
-        Este bloque SOLO aparece si el usuario tiene ROLE_ADMIN.
-        Si es USER, este enlace es completamente invisible en el HTML renderizado.
+        th:text escapa automáticamente el HTML.
+        Protege contra ataques XSS: si el nombre contiene
+        <script>alert("XSS")</script>, Thymeleaf lo muestra
+        como texto plano, nunca lo ejecuta.
     -->
+    <p>Nombre: <span th:text="${nombreUsuario}"></span></p>
+
     <div sec:authorize="hasRole('ADMIN')">
         <p>Tienes acceso de administrador.</p>
-        <a th:href="@{/admin}">📋 Ir al Panel de Administración</a>
+        <a th:href="@{/admin}">Panel de Administración</a>
     </div>
 
-    <!--
-        Este bloque SOLO aparece si el usuario tiene ROLE_USER.
-    -->
     <div sec:authorize="hasRole('USER')">
         <p>Contenido exclusivo para usuarios con rol USER.</p>
     </div>
 
-    <!--
-        El logout DEBE ser POST por protección CSRF.
-        Thymeleaf agrega el token automáticamente con th:action.
-    -->
     <form th:action="@{/logout}" method="post">
         <button type="submit">Cerrar sesión</button>
     </form>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
     <title>Login</title>
@@ -8,28 +9,27 @@
     <h1>Iniciar sesión</h1>
 
     <div th:if="${param.error}">
-        <p style="color:red">Nombre de usuario o contraseña inválidos.</p>
+        <p style="color:red">Correo o contraseña incorrectos.</p>
     </div>
     <div th:if="${param.logout}">
-        <p style="color:green">Has cerrado sesión correctamente.</p>
+        <p style="color:green">Sesión cerrada correctamente.</p>
     </div>
     <div th:if="${param.registrado}">
-        <p style="color:green">Registro completado. Por favor inicia sesión.</p>
+        <p style="color:green">Registro exitoso. Inicia sesión.</p>
     </div>
 
     <form th:action="@{/login}" method="post">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div>
             <label>Email:</label>
-            <input type="text" name="username" />
+            <input type="text" name="username" required />
         </div>
         <div>
             <label>Contraseña:</label>
-            <input type="password" name="password" />
+            <input type="password" name="password" required />
         </div>
-        <div>
-            <button type="submit">Ingresar</button>
-        </div>
+        <button type="submit">Ingresar</button>
     </form>
+
+    <a th:href="@{/registro}">¿No tiene cuenta? Registrarse</a>
 </body>
 </html>

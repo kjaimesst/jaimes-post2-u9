@@ -47,11 +47,14 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/dashboard")
+   @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
-        model.addAttribute("nombre", authentication.getName());
-        model.addAttribute("authorities", authentication.getAuthorities());
-        return "dashboard";
+    String email = authentication.getName();
+    
+    usuarioService.buscarPorEmail(email)
+            .ifPresent(u -> model.addAttribute("nombreUsuario", u.getNombre()));
+    
+    return "dashboard";
     }
 
     @GetMapping("/admin")

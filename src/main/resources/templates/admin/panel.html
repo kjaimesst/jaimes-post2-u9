@@ -19,15 +19,15 @@
         </thead>
         <tbody>
             <tr th:each="u : ${usuarios}">
-                <td th:text="${u.id}">1</td>
-                <td th:text="${u.nombre}">Nombre</td>
-                <td th:text="${u.email}">email@ejemplo.com</td>
-                <td th:text="${u.rol}">ROLE_USER</td>
-                <td th:text="${u.activo}">true</td>
+                <td th:text="${u.id}"></td>
+                <td th:text="${u.nombre}"></td>
+                <td th:text="${u.email}"></td>
+                <td th:text="${u.rol}"></td>
+                <td th:text="${u.activo}"></td>
             </tr>
         </tbody>
     </table>
 
-    <p><a th:href="@{/dashboard}">Volver al dashboard</a></p>
+    <a th:href="@{/dashboard}">← Volver al Dashboard</a>
 </body>
 </html>
