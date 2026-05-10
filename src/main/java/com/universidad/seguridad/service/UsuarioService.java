@@ -1,37 +1,57 @@
 package com.universidad.seguridad.service;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import com.universidad.seguridad.model.Usuario;
 import com.universidad.seguridad.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UsuarioRepository repo;
+    private final PasswordEncoder encoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
+    public UsuarioService(UsuarioRepository repo, PasswordEncoder encoder) {
+        this.repo = repo;
+        this.encoder = encoder;
     }
 
     @Transactional
-    public Usuario registrar(Usuario usuario) {
-        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
-            throw new RuntimeException("El email ya está registrado");
-        }
-        usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
+    public void registrar(Usuario usuario) {
+        if (repo.existsByEmail(usuario.getEmail()))
+            throw new RuntimeException("El correo ya está registrado");
+        usuario.setContrasenia(encoder.encode(usuario.getContrasenia()));
         usuario.setRol("ROLE_USER");
-        usuario.setActivo(true);
-        return usuarioRepository.save(usuario);
+        repo.save(usuario);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Usuario> listarTodos() {
-        return usuarioRepository.findAll();
+        return repo.findAll();
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
+    public Optional<Usuario> buscarPorEmail(String email) {
+        return repo.findByEmail(email);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public void cambiarRol(Long id, String nuevoRol) {
+        Usuario u = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        u.setRol(nuevoRol);
+    }
+
+    @PreAuthorize("#usuario.email == authentication.name or hasRole('ADMIN')")
+    @Transactional
+    public void actualizarNombre(Usuario usuario) {
+        Usuario existente = repo.findById(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("No encontrado"));
+        existente.setNombre(usuario.getNombre());
     }
 }
